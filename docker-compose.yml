@@ -1,0 +1,38 @@
+services:
+
+  # ─── Service API (FastAPI + JWT) ──────────────────────────────────────────
+  api:
+    build:
+      context: .            # racine du projet (pour accéder à src/ et models/)
+      dockerfile: api/Dockerfile
+    container_name: churn_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models:ro   # modèles montés en lecture seule
+    env_file:
+      - ./api/.env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  # ─── Service Dashboard (Streamlit) ────────────────────────────────────────
+  dashboard:
+    build:
+      context: .
+      dockerfile: dashboard/Dockerfile
+    container_name: churn_dashboard
+    ports:
+      - "8501:8501"
+    environment:
+      - API_BASE_URL=http://api:8000   # réseau Docker interne
+      - DEMO_USERNAME=admin
+      - DEMO_PASSWORD=churn2025!
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped

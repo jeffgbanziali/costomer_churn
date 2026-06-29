@@ -1,0 +1,27 @@
+# Environnement virtuel — jamais dans l'image
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Git
+.git/
+.gitignore
+
+# Notebooks et rapports (pas utiles dans les containers)
+notebooks/
+reports/
+
+# Fichiers temporaires et secrets
+*.env
+.env
+*.jsonl
+
+# Données brutes (trop lourdes, l'API n'en a pas besoin)
+data/
+
+# Artefacts Python
+*.egg-info/
+dist/
+build/

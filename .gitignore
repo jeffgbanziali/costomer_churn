@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data (ne pas versionner les données brutes > 50 Mo)
+data/*.csv
+data/*.parquet
+data/*.xlsx
+!data/.gitkeep
+
+# Modèles sauvegardés (trop lourds pour Git)
+models/*.pkl
+models/*.h5
+models/*.joblib
+models/*.keras
+models/*.parquet
+!models/.gitkeep
+
+# Secrets
+.env
+*.env
+api/.env
+
+# IDEs
+.vscode/
+.idea/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Reports (garder uniquement les figures versionnable)
+reports/figures/*.png
+reports/figures/*.pdf

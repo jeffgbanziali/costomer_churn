@@ -61,7 +61,7 @@ def api_headers(token: str) -> dict:
 
 @st.cache_data(show_spinner="Chargement des données...")
 def load_data() -> pd.DataFrame:
-    data_path = Path(__file__).parent.parent / "data" / "customer_churn.csv"
+    data_path = Path(__file__).parent.parent / "data" / "customer_churn_business_dataset.csv"
     if not data_path.exists():
         return pd.DataFrame()
     df = pd.read_csv(data_path)
@@ -160,12 +160,12 @@ if page == "Vue Globale (KPIs)":
 
     with col_b:
         st.subheader("Ancienneté vs. Churn")
-        if "tenure" in df.columns:
+        if "tenure_months" in df.columns:
             fig3 = px.box(
                 df, x=df["churn"].map({0: "Rétentionné", 1: "Churner"}),
-                y="tenure", color=df["churn"].map({0: "Rétentionné", 1: "Churner"}),
+                y="tenure_months", color=df["churn"].map({0: "Rétentionné", 1: "Churner"}),
                 color_discrete_map={"Churner": "#e74c3c", "Rétentionné": "#2ecc71"},
-                labels={"x": "Statut", "tenure": "Ancienneté (mois)"},
+                labels={"x": "Statut", "tenure_months": "Ancienneté (mois)"},
             )
             st.plotly_chart(fig3, use_container_width=True)
 
@@ -181,15 +181,15 @@ elif page == "Analyse du Risque":
         st.stop()
 
     st.subheader("Top 10 clients par revenu mensuel à risque (estimation)")
-    if "monthly_charges" in df.columns and "payment_failures" in df.columns:
+    if "monthly_fee" in df.columns and "payment_failures" in df.columns:
         at_risk = df[df["churn"] == 1].copy()
-        at_risk["revenue_mensuel_risque"] = at_risk["monthly_charges"]
+        at_risk["revenue_mensuel_risque"] = at_risk["monthly_fee"]
         top10 = at_risk.sort_values("revenue_mensuel_risque", ascending=False).head(10)
-        cols_to_show = [c for c in ["age", "tenure", "contract_type", "monthly_charges",
+        cols_to_show = [c for c in ["age", "tenure_months", "contract_type", "monthly_fee",
                                     "payment_failures", "nps_score"] if c in top10.columns]
         st.dataframe(top10[cols_to_show].reset_index(drop=True), use_container_width=True)
 
-        total_mensuel_risque = at_risk["monthly_charges"].sum()
+        total_mensuel_risque = at_risk["monthly_fee"].sum()
         st.info(
             f"**Insight business :** Les clients churners représentent "
             f"**{total_mensuel_risque:,.0f} €/mois** de charges mensuelles à risque. "
@@ -198,10 +198,10 @@ elif page == "Analyse du Risque":
         )
 
     st.subheader("Revenu à risque par segment d'ancienneté")
-    if "tenure" in df.columns:
+    if "tenure_months" in df.columns:
         df_copy = df.copy()
         df_copy["segment_tenure"] = pd.cut(
-            df_copy["tenure"], bins=[0, 12, 24, 60, 999],
+            df_copy["tenure_months"], bins=[0, 12, 24, 60, 999],
             labels=["< 1 an", "1-2 ans", "2-5 ans", "> 5 ans"]
         )
         risk_by_seg = (
@@ -238,29 +238,55 @@ elif page == "Simulateur Client":
     with st.form("customer_form"):
         st.subheader("Profil du client")
         col1, col2, col3 = st.columns(3)
-        age              = col1.number_input("Âge", 18, 100, 35)
-        gender           = col1.selectbox("Genre", ["Male", "Female", "Other"])
-        tenure           = col2.number_input("Ancienneté (mois)", 0, 300, 24)
-        contract_type    = col2.selectbox("Contrat", ["Month-to-Month", "One Year", "Two Year"])
-        monthly_charges  = col3.number_input("Charges mensuelles (€)", 0.0, 500.0, 65.0)
+        age              = col1.number_input("Âge", 18, 74, 35)
+        gender           = col1.selectbox("Genre", ["Male", "Female"])
+        tenure_months    = col2.number_input("Ancienneté (mois)", 0, 300, 24)
+        contract_type    = col2.selectbox("Contrat", ["Monthly", "Quarterly", "Yearly"])
+        monthly_fee      = col3.number_input("Abonnement mensuel (€)", 0.0, 500.0, 65.0)
         total_revenue    = col3.number_input("Revenu total (€)", 0.0, 50000.0, 1500.0)
 
         col4, col5, col6 = st.columns(3)
         payment_failures = col4.number_input("Échecs de paiement", 0, 20, 1)
         support_tickets  = col5.number_input("Tickets support", 0, 50, 2)
-        session_duration = col6.number_input("Durée session moy. (min)", 0.0, 300.0, 45.0)
-        login_frequency  = col4.number_input("Connexions/mois", 0.0, 200.0, 15.0)
+        avg_session_time = col6.number_input("Durée session moy. (min)", 0.0, 300.0, 45.0)
+        monthly_logins   = col4.number_input("Connexions/mois", 0, 200, 15)
         nps_score        = col5.slider("Score NPS", -100, 100, 20)
+        csat_score       = col6.slider("CSAT (1-5)", 1.0, 5.0, 3.5, step=0.5)
 
         submitted = st.form_submit_button("Prédire", type="primary")
 
     if submitted:
         payload = {
-            "age": age, "gender": gender, "tenure": tenure,
-            "contract_type": contract_type, "monthly_charges": monthly_charges,
-            "total_revenue": total_revenue, "payment_failures": payment_failures,
-            "support_tickets": support_tickets, "session_duration": session_duration,
-            "login_frequency": login_frequency, "nps_score": nps_score,
+            "age": age,
+            "gender": gender,
+            "country": "France",
+            "city": "Paris",
+            "customer_segment": "Individual",
+            "tenure_months": tenure_months,
+            "signup_channel": "Web",
+            "contract_type": contract_type,
+            "monthly_logins": monthly_logins,
+            "weekly_active_days": 3,
+            "avg_session_time": avg_session_time,
+            "features_used": 5,
+            "usage_growth_rate": 0.0,
+            "last_login_days_ago": 7,
+            "monthly_fee": monthly_fee,
+            "total_revenue": total_revenue,
+            "payment_method": "Card",
+            "payment_failures": payment_failures,
+            "discount_applied": "No",
+            "price_increase_last_3m": "No",
+            "support_tickets": support_tickets,
+            "avg_resolution_time": 24.0,
+            "complaint_type": None,
+            "csat_score": csat_score,
+            "escalations": 0,
+            "email_open_rate": 0.5,
+            "marketing_click_rate": 0.25,
+            "nps_score": nps_score,
+            "survey_response": "Neutral",
+            "referral_count": 0,
         }
         with st.spinner("Interrogation de l'API..."):
             try:

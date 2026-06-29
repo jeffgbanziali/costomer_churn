@@ -28,6 +28,8 @@ services:
     container_name: churn_dashboard
     ports:
       - "8501:8501"
+    volumes:
+      - ./data:/app/data:ro   # CSV monté en lecture seule pour les graphiques EDA
     environment:
       - API_BASE_URL=http://api:8000   # réseau Docker interne
       - DEMO_USERNAME=admin

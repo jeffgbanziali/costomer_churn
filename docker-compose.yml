@@ -28,6 +28,7 @@ services:
       - "8501:8501"
     volumes:
       - ./data:/app/data:ro   
+      - ./models:/app/models:ro
     environment:
       - API_BASE_URL=http://api:8000  
       - DEMO_USERNAME=admin

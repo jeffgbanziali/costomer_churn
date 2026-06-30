@@ -6,6 +6,9 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 from pathlib import Path
+import joblib
+
+
 
 # ---------------------------------------------------------------------------
 # Configuration
@@ -51,7 +54,7 @@ def api_headers(token: str) -> dict:
 
 @st.cache_data(show_spinner="Chargement des données...")
 def load_data() -> pd.DataFrame:
-    data_path = Path(__file__).parent.parent / "data" / "customer_churn_business_dataset.csv"
+    data_path = Path("/app/data") / "customer_churn_business_dataset.csv"
     if not data_path.exists():
         return pd.DataFrame()
     df = pd.read_csv(data_path)
@@ -328,7 +331,7 @@ elif page == "Simulateur Client":
 elif page == "Comparaison Modèles":
     st.title("Comparaison des Modèles")
 
-    models_dir = Path(__file__).parent.parent / "models"
+    models_dir = Path("/app/models")
     comparison_path = models_dir / "churn_comparison.joblib"
 
     if not comparison_path.exists():

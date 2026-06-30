@@ -62,9 +62,16 @@ def _load_models():
         _churn_model = joblib.load(sklearn_path)
         _churn_model_name = type(_churn_model).__name__
     elif keras_path.exists():
-        from tensorflow import keras
-        _churn_model = keras.models.load_model(keras_path)
-        _churn_model_name = "MLP (Keras)"
+        try:
+            from tensorflow import keras
+
+            print("Chargement du modèle Keras...")
+            _churn_model = keras.models.load_model(keras_path)
+            _churn_model_name = "MLP (Keras)"
+            print("Modèle chargé :", _churn_model_name)
+
+        except Exception as e:
+            print("ERREUR :", e)
 
     # Revenue model
     sklearn_path_r = MODELS_DIR / "best_model_revenue.joblib"

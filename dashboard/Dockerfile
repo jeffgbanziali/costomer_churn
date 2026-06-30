@@ -5,7 +5,9 @@ RUN pip install --no-cache-dir \
     requests>=2.31.0 \
     pandas>=2.0.0 \
     numpy>=1.24.0 \
-    plotly>=5.15.0
+    plotly>=5.15.0 \
+    joblib \
+    scikit-learn
 
 WORKDIR /app
 

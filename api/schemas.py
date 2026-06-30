@@ -1,8 +1,3 @@
-"""
-Pydantic v2 schemas — strict input validation for all prediction endpoints.
-Any missing field or wrong type returns HTTP 422 with a clear error message.
-"""
-
 from pydantic import BaseModel, Field, field_validator
 from typing import Literal, Optional
 

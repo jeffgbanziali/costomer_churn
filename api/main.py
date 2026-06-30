@@ -1,15 +1,3 @@
-"""
-FastAPI — Service d'inférence pour la rétention client.
-
-Endpoints :
-  POST /token                — authentification, retourne un JWT
-  GET  /health               — santé du service + état des modèles
-  POST /predict/churn        — prédiction du churn (protégé JWT)
-  POST /predict/revenue-risk — estimation du revenu à risque (protégé JWT)
-
-Run: uvicorn api.main:app --reload --port 8000
-"""
-
 import sys
 from pathlib import Path
 

@@ -1,17 +1,3 @@
-"""
-Anti-leakage preprocessing pipeline for the customer churn project.
-
-Dataset: customer_churn_business_dataset.csv (10 000 rows, 32 columns)
-Verified column names match the actual Kaggle file.
-
-CRITICAL ORDER (enforced by sklearn Pipeline):
-1. train_test_split (stratified) — done OUTSIDE this module by the caller
-2. Pipeline.fit() on X_train only
-3. Pipeline.transform() on X_train and X_test separately
-
-Never call fit() or fit_transform() on the full dataset.
-"""
-
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer

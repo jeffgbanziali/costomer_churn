@@ -1,8 +1,3 @@
-"""
-Evaluation utilities: metrics, comparison tables, error analysis.
-Shared between notebooks and API — do not import anything from notebooks here.
-"""
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt

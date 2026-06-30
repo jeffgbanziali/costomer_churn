@@ -9,13 +9,13 @@ build/
 .venv/
 venv/
 env/
-.claude/
+
 
 # Jupyter
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
-# Data (ne pas versionner les données brutes > 50 Mo)
+
 data/*.csv
 data/*.parquet
 data/*.xlsx
@@ -44,6 +44,6 @@ api/.env
 .DS_Store
 Thumbs.db
 
-# Reports (garder uniquement les figures versionnable)
+
 reports/figures/*.png
 reports/figures/*.pdf

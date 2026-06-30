@@ -1,13 +1,3 @@
-"""
-Streamlit Dashboard — Plateforme de Rétention Client
-Architecture : Front (Streamlit) → API (FastAPI) → Modèles
-
-Le dashboard appelle l'API pour toutes les prédictions.
-Il ne charge jamais les modèles directement (architecture réaliste).
-
-Run: streamlit run dashboard/app.py
-"""
-
 import os
 import requests
 import pandas as pd

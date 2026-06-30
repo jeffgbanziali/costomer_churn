@@ -1,8 +1,3 @@
-"""
-Task B — Revenue at risk regression (bonus).
-Requires Task A to have run first (models/churn_proba_test.parquet).
-"""
-
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))

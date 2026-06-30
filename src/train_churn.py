@@ -1,12 +1,3 @@
-"""
-Task A — Binary churn classification.
-
-Train 4 models (Logistic Regression, Random Forest, XGBoost, MLP),
-compare them, and persist the best one with its preprocessing pipeline.
-
-Run: python src/train_churn.py
-"""
-
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))

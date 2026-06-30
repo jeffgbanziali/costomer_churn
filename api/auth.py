@@ -1,7 +1,3 @@
-"""
-JWT authentication — same pattern as Urban Immo project (python-jose + OAuth2PasswordBearer).
-"""
-
 import os
 from datetime import datetime, timedelta, timezone
 

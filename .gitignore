@@ -27,6 +27,7 @@ models/*.joblib
 models/*.keras
 models/*.parquet
 !models/.gitkeep
+.presentaion_soutenance.md
 
 # Secrets
 .env

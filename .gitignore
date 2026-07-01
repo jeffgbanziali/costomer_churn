@@ -27,6 +27,7 @@ models/*.h5
 models/*.joblib
 models/*.keras
 models/*.parquet
+models/pipeline_artifacts/
 !models/.gitkeep
 .presentaion_soutenance.md
 

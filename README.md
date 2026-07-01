@@ -1,21 +1,21 @@
-# Plateforme Intelligence Client — Prédiction du Churn & Risque de Revenus
+# Plateforme Intelligence Client — Prédiction du Churn
 
-Système de prédiction du churn client combinant machine learning classique et deep learning, avec une API REST sécurisée et un dashboard interactif. Le projet traite un cas réel d'une base de 10 000 clients SaaS présentant un taux de churn de ~10%.
+Système de prédiction du churn client combinant machine learning classique et deep learning, avec une API REST sécurisée et un dashboard interactif. Le projet traite 10 000 clients SaaS avec un taux de churn de ~10%.
 
 ---
 
-## Aperçu des résultats
+## Résultats (seuil optimisé par courbe PR)
 
-| Modèle | F1 (churn) | ROC-AUC | PR-AUC |
-|---|---|---|---|
-| Logistic Regression | 0.311 | 0.748 | 0.271 |
-| Random Forest | 0.193 | 0.802 | 0.271 |
-| XGBoost | 0.174 | 0.741 | 0.219 |
-| **MLP (sélectionné)** | **0.335** | **0.742** | **0.219** |
+| Modèle | F1 | Recall | Précision | ROC-AUC | PR-AUC | Seuil |
+|---|---|---|---|---|---|---|
+| **Random Forest** | **0.43** | **0.76** | 0.30 | **0.84** | **0.36** | 0.63 |
+| XGBoost | 0.42 | 0.59 | 0.33 | 0.84 | 0.35 | 0.66 |
+| MLP (Keras) | 0.42 | 0.59 | 0.32 | 0.80 | 0.26 | 0.58 |
+| Logistic Regression | 0.39 | 0.56 | 0.30 | 0.79 | 0.28 | 0.57 |
 
-Le MLP est retenu pour son meilleur **rappel (53%)** — dans un contexte churn, rater un churner coûte plus cher que de déclencher une action de rétention inutile.
+Le **Random Forest** est retenu : meilleur F1 (0.43) et meilleur rappel (76%) sur validation. Contexte métier : rater un churner coûte 238 EUR, déclencher une action inutile 30 EUR — maximiser le rappel prime.
 
-Revenu à risque moyen estimé : **238 €/client** (modèle régression Random Forest, R²=0.65).
+Test final (Random Forest, seuil 0.63) : F1=0.376, Recall=0.680, ROC-AUC=0.793.
 
 ---
 
@@ -23,20 +23,20 @@ Revenu à risque moyen estimé : **238 €/client** (modèle régression Random 
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    Streamlit Dashboard                   │
-│         (4 pages : EDA · Prédiction · Batch · API)       │
+│                  Streamlit Dashboard (5 pages)           │
+│    EDA · Analyse Risque · Simulateur · Batch · Modeles  │
 └────────────────────────┬────────────────────────────────┘
                          │ HTTP (JWT Bearer)
 ┌────────────────────────▼────────────────────────────────┐
-│                     FastAPI  :8000                       │
-│   POST /token   GET /health                              │
-│   POST /predict/churn   POST /predict/revenue-risk       │
+│                    FastAPI :8000                          │
+│  POST /token  GET /health                                │
+│  POST /predict/churn  POST /predict/churn/batch          │
+│  POST /predict/revenue-risk                              │
 └────────────────────────┬────────────────────────────────┘
                          │
-            ┌────────────┴────────────┐
-            │                         │
-     MLP Keras (.keras)     Random Forest (.joblib)
-      Tâche A : churn        Tâche B : revenu à risque
+              preprocessing_artifacts.joblib
+              best_model_churn.joblib (Random Forest)
+              modeling_artifacts.joblib
 ```
 
 ---
@@ -46,44 +46,33 @@ Revenu à risque moyen estimé : **238 €/client** (modèle régression Random 
 ```
 projet_data_science/
 │
-├── data/                          # Dataset brut (non versionné)
+├── data/                              # Dataset brut (non versionné)
 │   └── customer_churn_business_dataset.csv
 │
 ├── notebooks/
-│   ├── 01_eda.ipynb               # Analyse exploratoire
-│   ├── 02_preprocessing.ipynb    # Pipeline anti-leakage
-│   ├── 03_modeling_churn.ipynb   # 4 modèles de classification
-│   ├── 04_modeling_revenue_risk.ipynb  # Régression revenu à risque
-│   └── 05_interpretability.ipynb # SHAP + Permutation Importance
-│
-├── src/
-│   ├── preprocessing.py          # Pipeline sklearn (ColumnTransformer)
-│   ├── evaluation.py             # Métriques, SHAP helpers
-│   ├── train_churn.py            # Script d'entraînement standalone
-│   └── train_revenue_risk.py     # Script pour la Tâche B
+│   ├── 01_eda.ipynb                   # Analyse exploratoire
+│   ├── 02_preprocessing.ipynb         # Pipeline anti-leakage (70/15/15)
+│   ├── 03_modeling.ipynb              # 4 modèles de classification
+│   └── 04_interpretability.ipynb      # SHAP beeswarm, waterfall, dependence
 │
 ├── api/
-│   ├── Dockerfile
-│   ├── main.py                   # FastAPI — endpoints JWT
-│   ├── auth.py                   # python-jose, bcrypt
-│   ├── schemas.py                # Validation Pydantic v2
-│   ├── requirements.txt
-│   ├── .env.example              # Template de configuration
-│   └── .env                      # Secrets (non versionné)
+│   ├── main.py                        # FastAPI — endpoints JWT
+│   ├── auth.py                        # python-jose, bcrypt
+│   ├── schemas.py                     # Validation Pydantic v2
+│   ├── .env.example                   # Template de configuration
+│   └── .env                           # Secrets (non versionné)
 │
 ├── dashboard/
-│   ├── Dockerfile
-│   └── app.py                    # Streamlit — 4 pages
+│   └── app.py                         # Streamlit — 5 pages
 │
-├── models/                       # Artefacts ML (non versionnés)
-│   ├── best_model_churn.keras
-│   ├── best_model_revenue.joblib
-│   ├── preprocessor_churn.joblib
-│   └── preprocessor_revenue.joblib
+├── models/                            # Artefacts ML (non versionnés)
+│   ├── preprocessing_artifacts.joblib # Preprocessor + splits (7.4 MB)
+│   ├── best_model_churn.joblib        # Random Forest final (1.5 MB)
+│   ├── churn_comparison.joblib        # Tableau comparatif
+│   └── modeling_artifacts.joblib      # Seuils, métriques, probas (25 KB)
 │
-├── reports/figures/              # Visualisations exportées
+├── reports/figures/                   # Visualisations exportées (PNG)
 ├── docker-compose.yml
-├── .dockerignore
 └── requirements.txt
 ```
 
@@ -92,34 +81,26 @@ projet_data_science/
 ## Installation
 
 ### Prérequis
-- Python 3.11 (TensorFlow 2.x n'est pas compatible avec Python 3.12+)
-- Docker Desktop (pour l'option conteneurs)
+- Python 3.11 (TensorFlow 2.x incompatible avec Python 3.12+)
 
 ### Environnement local
 
 ```powershell
-# Créer et activer le venv Python 3.11
 py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-
-# Installer toutes les dépendances
 pip install -r requirements.txt
-pip install -r api/requirements.txt
-pip install streamlit
 ```
 
 ### Configurer les secrets
 
 ```powershell
 copy api\.env.example api\.env
-# Éditer api\.env avec une vraie SECRET_KEY
+# Éditer api\.env et remplacer SECRET_KEY par une valeur aléatoire
 ```
 
 ---
 
 ## Lancer le projet
-
-### Option 1 — En local
 
 ```powershell
 # Terminal 1 : API
@@ -133,26 +114,12 @@ cd api
 - Swagger : http://localhost:8000/docs
 - Dashboard : http://localhost:8501
 
-### Option 2 — Docker Compose
-
-```bash
-docker-compose up --build
-```
-
-Les deux services démarrent automatiquement. Le dashboard attend que l'API soit prête (healthcheck).
-
 ### Régénérer les modèles
 
-Si les fichiers `models/` ne sont pas présents, exécuter les notebooks dans l'ordre :
+Exécuter les notebooks dans l'ordre :
 
 ```
-01_eda → 02_preprocessing → 03_modeling_churn → 04_modeling_revenue_risk → 05_interpretability
-```
-
-Ou via les scripts standalone :
-```powershell
-.\.venv\Scripts\python.exe src/train_churn.py
-.\.venv\Scripts\python.exe src/train_revenue_risk.py
+01_eda → 02_preprocessing → 03_modeling → 04_interpretability
 ```
 
 ---
@@ -185,13 +152,13 @@ Invoke-RestMethod -Uri "http://localhost:8000/predict/churn" `
   }'
 ```
 
-Réponse attendue :
+Réponse :
 ```json
 {
   "churn_prediction": 1,
   "churn_probability": 0.8932,
-  "risk_level": "Élevé",
-  "model_used": "MLP (Keras)"
+  "risk_level": "Elevé",
+  "model_used": "RandomForestClassifier"
 }
 ```
 
@@ -204,7 +171,8 @@ Réponse attendue :
 | Langage | Python 3.11 |
 | ML | scikit-learn 1.9, XGBoost 3.2 |
 | Deep Learning | TensorFlow / Keras 2.21 |
-| Interprétabilité | SHAP 0.51, Permutation Importance |
+| Rééquilibrage classes | imbalanced-learn (SMOTE comparatif) |
+| Interprétabilité | SHAP 0.51 |
 | API | FastAPI 0.138, Uvicorn |
 | Auth | python-jose (JWT), passlib (bcrypt) |
 | Dashboard | Streamlit 1.58, Plotly |

@@ -23,15 +23,15 @@ Test final (Random Forest, seuil 0.63) : F1=0.376, Recall=0.680, ROC-AUC=0.793.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                  Streamlit Dashboard (5 pages)           │
+│                  Streamlit Dashboard (5 pages)          │
 │    EDA · Analyse Risque · Simulateur · Batch · Modeles  │
 └────────────────────────┬────────────────────────────────┘
                          │ HTTP (JWT Bearer)
 ┌────────────────────────▼────────────────────────────────┐
-│                    FastAPI :8000                          │
-│  POST /token  GET /health                                │
-│  POST /predict/churn  POST /predict/churn/batch          │
-│  POST /predict/revenue-risk                              │
+│                    FastAPI :8000                        │
+│  POST /token  GET /health                               │
+│  POST /predict/churn  POST /predict/churn/batch         │
+│  POST /predict/revenue-risk                             │
 └────────────────────────┬────────────────────────────────┘
                          │
               preprocessing_artifacts.joblib
@@ -59,7 +59,7 @@ projet_data_science/
 │   ├── main.py                        # FastAPI — endpoints JWT
 │   ├── auth.py                        # python-jose, bcrypt
 │   ├── schemas.py                     # Validation Pydantic v2
-│   ├── .env.example                   # Template de configuration
+configuration
 │   └── .env                           # Secrets (non versionné)
 │
 ├── dashboard/

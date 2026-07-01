@@ -23,6 +23,21 @@ plotly>=5.15.0
 jupyter>=1.0.0
 ipykernel>=6.0.0
 
+# Class imbalance
+imbalanced-learn>=0.12.0
+
 # Utilities
 joblib>=1.3.0
 python-dotenv>=1.0.0
+pyarrow>=14.0.0
+
+# Dashboard & API (optionnel en local si installés séparément)
+streamlit>=1.35.0
+requests>=2.31.0
+fastapi>=0.111.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.0.0
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+bcrypt>=3.2.0,<4.0.0
+python-multipart>=0.0.9

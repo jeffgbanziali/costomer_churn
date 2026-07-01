@@ -44,10 +44,21 @@ class ChurnPredictionResponse(BaseModel):
     model_used: str
 
 
+class ChurnBatchResponse(BaseModel):
+    count: int
+    predictions: list[ChurnPredictionResponse]
+
+
 class RevenueRiskResponse(BaseModel):
     revenue_at_risk: float = Field(..., description="Revenu estimé à risque (€)")
-    churn_probability: float = Field(..., description="Probabilité de churn sous-jacente (€)")
+    churn_probability: float = Field(..., description="Probabilité de churn sous-jacente (0-1)")
     model_used: str
+
+
+class RevenueRiskBatchResponse(BaseModel):
+    count: int
+    churn_model_used: str
+    predictions: list[RevenueRiskResponse]
 
 
 class HealthResponse(BaseModel):

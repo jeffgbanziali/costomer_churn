@@ -94,7 +94,6 @@ pip install -r requirements.txt
 ### Configurer les secrets
 
 ```powershell
-copy api\.env.example api\.env
 # Éditer api\.env et remplacer SECRET_KEY par une valeur aléatoire
 ```
 

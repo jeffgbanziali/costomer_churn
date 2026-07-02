@@ -151,7 +151,14 @@ if page == "Vue Globale (KPIs)":
     c2.metric("Churners",           f"{n_churn:,}", delta=f"{churn_rate:.1%}", delta_color="inverse")
     c3.metric("Revenu à risque",    f"{rev_at_risk:,.0f} €", delta=f"{rev_at_risk/rev_total:.1%} du CA", delta_color="inverse")
     c4.metric("MRR à risque",       f"{mrr_risque:,.0f} €/mois")
-    c5.metric("NPS moyen",          f"{nps_moyen:.0f}", delta=f"Churners: {churners['nps_score'].mean():.0f}" if "nps_score" in df.columns else "")
+    if "nps_score" in df.columns:
+        nps_churn   = churners["nps_score"].mean()
+        nps_retain  = retained["nps_score"].mean()
+        c5.metric("NPS moyen", f"{nps_moyen:.0f}",
+                  delta=f"Churners {nps_churn:.0f} vs Fidèles {nps_retain:.0f}",
+                  delta_color="off")
+    else:
+        c5.metric("NPS moyen", f"{nps_moyen:.0f}")
 
     st.markdown("---")
 

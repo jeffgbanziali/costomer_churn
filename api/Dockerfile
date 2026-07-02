@@ -9,9 +9,6 @@ WORKDIR /app
 COPY api/requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-# Source partagée (preprocessing, evaluation)
-COPY src/ /app/src/
-
 # Code de l'API
 COPY api/ /app/api/
 

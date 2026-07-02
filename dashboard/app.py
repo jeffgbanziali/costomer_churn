@@ -47,7 +47,6 @@ def models_dir() -> Path:
 
 st.set_page_config(
     page_title="Rétention Client — Dashboard IA",
-    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -99,7 +98,7 @@ def load_data() -> pd.DataFrame:
 # Sidebar — navigation
 # ---------------------------------------------------------------------------
 
-st.sidebar.title("📊 Navigation")
+st.sidebar.title("Navigation")
 page = st.sidebar.radio(
     "Section",
     ["Vue Globale (KPIs)", "Analyse du Risque", "Simulateur Client", "Prédiction Batch", "Comparaison Modèles"],
@@ -116,8 +115,8 @@ status_color = "green" if api_ok else "red"
 st.sidebar.markdown(f"**Statut API :** :{status_color}[{'En ligne' if api_ok else 'Hors ligne'}]")
 if api_ok:
     st.sidebar.caption(
-        f"Churn model: {'✅' if health.get('churn_model_loaded') else '⚠️ Non chargé'}  |  "
-        f"Preprocessor: {'✅' if health.get('preprocessor_loaded') else '⚠️'}"
+        f"Churn model: {'OK' if health.get('churn_model_loaded') else 'Non chargé'}  |  "
+        f"Preprocessor: {'OK' if health.get('preprocessor_loaded') else 'Erreur'}"
     )
 st.sidebar.markdown("---")
 st.sidebar.caption("EFREI M1 Data Engineering — Projet Rétention Client")
@@ -397,7 +396,7 @@ elif page == "Simulateur Client":
             col_r1, col_r2, col_r3 = st.columns(3)
             col_r1.metric("Probabilité de churn", f"{proba:.1%}")
             col_r1.markdown(f"Niveau de risque : **:{risk_color[rl]}[{rl}]**")
-            col_r2.metric("Prédiction", "Churner ⚠️" if res["churn_prediction"] == 1 else "Rétentionné ✅")
+            col_r2.metric("Prédiction", "Churner" if res["churn_prediction"] == 1 else "Rétentionné")
             col_r3.metric("Revenu à risque estimé", f"{total_revenue * proba:,.0f} €")
 
             fig_gauge = go.Figure(go.Indicator(

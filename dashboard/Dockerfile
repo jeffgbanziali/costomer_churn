@@ -6,6 +6,7 @@ RUN pip install --no-cache-dir \
     pandas>=2.0.0 \
     numpy>=1.24.0 \
     plotly>=5.15.0 \
+    matplotlib>=3.7.0 \
     joblib \
     scikit-learn
 

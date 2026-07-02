@@ -150,7 +150,7 @@ if page == "Vue Globale (KPIs)":
     c1.metric("Clients totaux",     f"{n_total:,}")
     c2.metric("Churners",           f"{n_churn:,}", delta=f"{churn_rate:.1%}", delta_color="inverse")
     c3.metric("Revenu à risque",    f"{rev_at_risk:,.0f} €", delta=f"{rev_at_risk/rev_total:.1%} du CA", delta_color="inverse")
-    c4.metric("MRR à risque",       f"{mrr_risque:,.0f} €/mois")
+    c4.metric("MRR à risque (€/mois)", f"{mrr_risque:,.0f} €")
     if "nps_score" in df.columns:
         nps_churn   = churners["nps_score"].mean()
         nps_retain  = retained["nps_score"].mean()
